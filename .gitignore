@@ -1,0 +1,18 @@
+target/
+.mvn/wrapper/maven-wrapper.jar
+release.pom
+src/main/resources/announcement
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+atlassian-ide-plugin.xml
+
+### VS Code ###
+.vscode/
+
+### CI/CD Pipeline
+.m2/
