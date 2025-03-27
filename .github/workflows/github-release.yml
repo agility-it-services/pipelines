@@ -1,0 +1,38 @@
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: 'The version to release'
+        type: string
+        required: true
+    secrets:
+      token:
+        description: 'The GitHub token to use to perform the deployment with'
+        required: true
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'liberica'
+          cache: 'maven'
+      - name: Prepare Release Asset
+        run: mvn -B -U -V -ntp -Drevision=${GITHUB_SHA::7} -DskipTests jar:jar
+      - name: Get version
+        id: get_version
+        uses: christian-draeger/read-properties@1.0.1
+        with:
+          path: './target/maven-archiver/pom.properties'
+          property: 'version'
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.token }}
+          ARTIFACT_VERSION: ${{ inputs.version }}
+        run: gh release create "$ARTIFACT_VERSION" --generate-notes
