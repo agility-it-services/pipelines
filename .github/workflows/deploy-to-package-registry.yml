@@ -1,0 +1,25 @@
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The GitHub token to use to perform the deployment with'
+        required: true
+jobs:
+  deploy-to-package-registry:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'liberica'
+          cache: 'maven'
+      - name: Publish to GitHub Packages
+        run: mvn -B -U -V -ntp -Drevision=${GITHUB_SHA::7} -DskipTests deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.token }}
