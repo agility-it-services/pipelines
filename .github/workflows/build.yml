@@ -1,0 +1,21 @@
+on:
+  workflow_call:
+    inputs:
+      maven-command:
+        description: 'The Maven command to execute'
+        type: string
+        required: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'liberica'
+          cache: 'maven'
+      - name: Build
+        run: mvn -B -U -V -ntp ${{ inputs.maven-command }}
