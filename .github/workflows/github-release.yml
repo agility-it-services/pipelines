@@ -1,10 +1,5 @@
 on:
   workflow_call:
-    inputs:
-      version:
-        description: 'The version to release'
-        type: string
-        required: true
     secrets:
       token:
         description: 'The GitHub token to use to perform the deployment with'
@@ -34,5 +29,5 @@ jobs:
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.token }}
-          ARTIFACT_VERSION: ${{ inputs.version }}
+          ARTIFACT_VERSION: ${{ steps.get_version.outputs.value }}
         run: gh release create "$ARTIFACT_VERSION" --generate-notes
