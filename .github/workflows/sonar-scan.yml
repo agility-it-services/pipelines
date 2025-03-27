@@ -1,0 +1,20 @@
+on:
+  workflow_call:
+    secrets:
+      token:
+        description: 'The SonarQube token to use to perform the scan with'
+        required: true
+jobs:
+  sonar-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'liberica'
+          cache: 'maven'
+      - name: Scan
+        run: mvn -B -U -V -ntp -Drevision=${GITHUB_SHA::7} -Dsonar.token=${{ secrets.token }} -Psonar verify
